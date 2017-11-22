@@ -6,7 +6,7 @@ var gulp            = require("gulp"),
 
 gulp.task("document", function(){
   console.log("-- building documentation");
-  return gulp.src('src/engine/*.js')
+  return gulp.src('src/trinity/*.js')
   .pipe(docs('html'))
   .pipe(gulp.dest('build/docs'));
 });
