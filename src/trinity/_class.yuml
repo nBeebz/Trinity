@@ -1,0 +1,26 @@
+// {type:class}
+// {direction:topDown}
+// {generate:true}
+[Trinity|clock|addScene();changeScene();start()]
+[SceneManager|renderer|addScene();changeScene();draw()]
+[Scene|camera;scene;input;physicsWorld;components;entities|addComponentType();add();update()]
+[InputManager|keyCallbacks;gpBtnCallbacks;gpAxisCallbacks;controllers;cameraControl|dispose();prepare();update();bindControls()]
+[PhysicsComponent|body|update()]
+[GraphicsComponent|Loaders;mesh|transform()]
+[Entity|id;components;needsUpdate|attach();detach()]
+[AudioComponent|sound;positional;mircrophone|update();toggle();play();enablePositionalAudio();enableMicrophone()]
+
+[Trinity]++1-1[SceneManager]
+[SceneManager]++1-1..*[Scene]
+[SceneManager]++1-1[InputManager]
+[Scene]+1-0..*[Entity]
+[Scene]+1-0..*[PhysicsComponent]
+[Scene]+1-0..*[AudioComponent]
+[Scene]+1-0..*[GraphicsComponent]
+[Scene]-[note: The Scene keeps track of both a list of entities (for reference) and lists of each component type (for optimized traversal)]
+[Entity]+1-0..1[PhysicsComponent]
+[Entity]+1-0..1[AudioComponent]
+[Entity]+1-0..1[GraphicsComponent]
+
+
+

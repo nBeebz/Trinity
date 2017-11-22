@@ -1,0 +1,26 @@
+{
+  "name": "practicum",
+  "version": "1.0.0",
+  "description": "BCIT practicum project",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter list"
+  },
+  "author": "Nav Bhatti",
+  "license": "ISC",
+  "devDependencies": {
+    "ammonext": "0.0.3",
+    "documentation": "^5.3.3",
+    "gulp": "^3.9.1",
+    "gulp-documentation": "^3.2.1",
+    "gulp-image": "^4.0.0",
+    "gulp-include": "^2.3.1",
+    "gulp-inject": "^4.3.0",
+    "gulp-jsdoc3": "^1.0.1",
+    "gulp-webserver": "^0.9.1",
+    "jsdoc-inheritance-diagram": "^1.1.1",
+    "mocha": "^4.0.1",
+    "three": "^0.87.1"
+  },
+  "dependencies": {}
+}
