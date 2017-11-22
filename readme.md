@@ -1,6 +1,6 @@
 # Trinity Engine
 
-The Trinity engine is a component-based game engine amde for maximum flexibility.
+The Trinity engine is a component-based game engine made for maximum flexibility.
 
 ## Installation
 
