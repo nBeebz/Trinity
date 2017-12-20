@@ -32,10 +32,11 @@ class InputManager{
         
         this.keyCallbacks = {};
         this.gpBtnCallbacks = {};        
-        this.gpAxisCallbacks = {};
+        this.gpAxisCallbacks = {};        
         this.controllers = {};
         this.prevButtons = {};
-        
+        this.mouseCallback = function(){};
+
         this.cameraControl = {
             update : function(){},
             dispose : function(){},
@@ -44,6 +45,7 @@ class InputManager{
         
         this.gamepadConnectedHandler = this.handleGamepadConnected.bind(this);
         this.gamepadDisconnectedHandler = this.handleGamepadRemoved.bind(this);
+        this.mouseClickHandler = this.handleMouseClick.bind(this);
         this.keyPressHandler = this.handleKeyDown.bind(this);
         this.keyReleaseHandler = this.handleKeyUp.bind(this);
         this.checkGamepads = this.scangamepads.bind(this);
@@ -66,6 +68,8 @@ class InputManager{
         }
         
         window.removeEventListener("keypress", this.keyPressHandler, false);
+        window.removeEventListener("click", this.mouseClickHandler, false);
+
         this.cameraControl.dispose();
     }
 
@@ -85,6 +89,7 @@ class InputManager{
             setInterval(this.checkGamepads, 500);
         }
         window.addEventListener("keypress", this.keyPressHandler, false);
+        window.addEventListener("click", this.mouseClickHandler, false);
         
         this.cameraControl.prepare();
     }
@@ -154,6 +159,10 @@ class InputManager{
                 this.bindKey(keys[i], bindings[keys[i]]);
             }
         }
+    }
+
+    bindMouse(callback){
+        this.mouseCallback = callback;
     }
 
     //#region Gamepad
@@ -297,7 +306,8 @@ class InputManager{
     handleKeyUp(){
 
     }
-    
+        
+
     /**
      * Adds the callback to the list of functions called when the key is fired.
      * 
@@ -314,6 +324,12 @@ class InputManager{
 
     //#endregion
     
+    handleMouseClick(event){
+        this.mouseCallback(event.clientX, event.clientY);
+    }
+
+
+
     //#region Camera Control
     /**
      * Helper method to enable Trackball style camera controls

@@ -483,6 +483,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#scenemanagerremovescene'
+                        class='regular pre-open'>
+                        .removeScene
+                      </a></li>
+                    
+                      <li><a
                         href='#scenemanagerchangescene'
                         class='regular pre-open'>
                         .changeScene
@@ -3103,7 +3109,7 @@ Both preventDefault() and stopPropagation() will be called on the event for ever
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>transform</span> <code class='quiet'>(any)</code>
-	    The transform information for this componentwill be saved to this object if it has a motion state.
+	    The transform information for this component. Will be saved to this object if it has a motion state.
 
           </div>
           
@@ -3925,6 +3931,66 @@ Both preventDefault() and stopPropagation() will be called on the event for ever
           <div>
             <span class='code bold'>scene</span> <code class='quiet'>(any)</code>
 	    The scene to be added
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='scenemanagerremovescene'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>removeScene(scene)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Removes from the list of scenes to be managed.</p>
+
+
+  <div class='pre p1 fill-light mt0'>removeScene(scene: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>scene</span> <code class='quiet'>(any)</code>
+	    The scene to be removed
 
           </div>
           

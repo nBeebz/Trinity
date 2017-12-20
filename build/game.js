@@ -4506,7 +4506,7 @@ class PhysicsComponent{
      * @param {Object} rotation The rotation of the component in quaternion form.
      * @memberof PhysicsComponent
      */
-    constructor(shape, position, mass, rotation){
+    constructor(shape = new Ammo.btBoxShape(new Ammo.btVector3(1,1,1)), position = new Ammo.btVector3(0,0,0), mass = 0, rotation = new Ammo.btVector3(0,0,0)){
         var transform = new Ammo.btTransform();
         transform.setIdentity();
         transform.setOrigin( new Ammo.btVector3( position.x, position.y, position.z ) );
@@ -4526,7 +4526,7 @@ class PhysicsComponent{
     /**
      * Updates this component after the physics world as been stepped.
      * 
-     * @param {any} transform The transform information for this componentwill be saved to this object if it has a motion state.
+     * @param {any} transform The transform information for this component. Will be saved to this object if it has a motion state.
      * @returns {boolean} Whether or not this component has a motion state on this frame.
      * @memberof PhysicsComponent
      */
@@ -6503,10 +6503,11 @@ class InputManager{
         
         this.keyCallbacks = {};
         this.gpBtnCallbacks = {};        
-        this.gpAxisCallbacks = {};
+        this.gpAxisCallbacks = {};        
         this.controllers = {};
         this.prevButtons = {};
-        
+        this.mouseCallback = function(){};
+
         this.cameraControl = {
             update : function(){},
             dispose : function(){},
@@ -6515,6 +6516,7 @@ class InputManager{
         
         this.gamepadConnectedHandler = this.handleGamepadConnected.bind(this);
         this.gamepadDisconnectedHandler = this.handleGamepadRemoved.bind(this);
+        this.mouseClickHandler = this.handleMouseClick.bind(this);
         this.keyPressHandler = this.handleKeyDown.bind(this);
         this.keyReleaseHandler = this.handleKeyUp.bind(this);
         this.checkGamepads = this.scangamepads.bind(this);
@@ -6537,6 +6539,8 @@ class InputManager{
         }
         
         window.removeEventListener("keypress", this.keyPressHandler, false);
+        window.removeEventListener("click", this.mouseClickHandler, false);
+
         this.cameraControl.dispose();
     }
 
@@ -6556,6 +6560,7 @@ class InputManager{
             setInterval(this.checkGamepads, 500);
         }
         window.addEventListener("keypress", this.keyPressHandler, false);
+        window.addEventListener("click", this.mouseClickHandler, false);
         
         this.cameraControl.prepare();
     }
@@ -6625,6 +6630,10 @@ class InputManager{
                 this.bindKey(keys[i], bindings[keys[i]]);
             }
         }
+    }
+
+    bindMouse(callback){
+        this.mouseCallback = callback;
     }
 
     //#region Gamepad
@@ -6768,7 +6777,8 @@ class InputManager{
     handleKeyUp(){
 
     }
-    
+        
+
     /**
      * Adds the callback to the list of functions called when the key is fired.
      * 
@@ -6785,6 +6795,12 @@ class InputManager{
 
     //#endregion
     
+    handleMouseClick(event){
+        this.mouseCallback(event.clientX, event.clientY);
+    }
+
+
+
     //#region Camera Control
     /**
      * Helper method to enable Trackball style camera controls
@@ -6972,26 +6988,30 @@ class Scene{
      * @memberof Scene
      */
     updateEntity(entity){
-        if(!entities.includes(entity)){
+        if(!this.entities.includes(entity)){
             this.add(entity);
             return;
         }
         for(var tag in entity.components){
             if(this.tagList.includes(tag)){
-                this.components[tag][entity.id] = entity.components[tag];
+                if(entity.components[tag] == null){
+                    delete this.components[tag][entity.id];
+                }else{
+                    this.components[tag][entity.id] = entity.components[tag];
+                }
             }
         }
 
         entity.needsUpdate = false;
     }
 
-/**
- * Updates this scene and all of it's components.
- * 
- * @param {any} deltaTime The time since last update
- * @memberof Scene
- */
-update(deltaTime){
+    /**
+     * Updates this scene and all of it's components.
+     * 
+     * @param {any} deltaTime The time since last update
+     * @memberof Scene
+     */
+    update(deltaTime){
         this.input.update();
 
         // Step world
@@ -7001,7 +7021,7 @@ update(deltaTime){
         // Update entities first
         for ( var i = 0; i < this.entities.length; i++ ) {
             if(this.entities[i].needsUpdate){
-                updateEntity(this.entities[i]);     
+                this.updateEntity(this.entities[i]);     
             }
         }
 
@@ -7105,7 +7125,7 @@ class SceneManager{
      * @param {any} startingScene The scene to start with this SceneManager.
      * @memberof SceneManager
      */
-    constructor(startingScene){
+    constructor(height = window.innerHeight, width = window.innerWidth, startingScene = null){
         if(SceneManager.Instance){
             return SceneManager.Instance;
         }
@@ -7115,10 +7135,13 @@ class SceneManager{
             this.changeScene(startingScene);
         }
 
+        this.screenWidth = width;
+        this.screenHeight = height;
+
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
-        this.renderer.shadowMap.enabled = true;
+        this.renderer.setSize( this.screenWidth, this.screenHeight );
+        this.renderer.shadowMap.enabled = true;        
 
         document.body.appendChild( this.renderer.domElement );  
         window.addEventListener( 'resize', this.onWindowResize, false );
@@ -7133,10 +7156,10 @@ class SceneManager{
      */
     onWindowResize() {
         for(var scene in this.scenes){
-            scene.camera.aspect = window.innerWidth / window.innerHeight;
+            scene.camera.aspect = this.screenWidth / this.screenHeight;
             scene.camera.updateProjectionMatrix();
         }
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( this.screenWidth, this.screenHeight );
     }
 
     /**
@@ -7150,6 +7173,19 @@ class SceneManager{
         if(this.currentScene == undefined){
             this.changeScene(scene);
         }
+    }
+
+    /**
+     * Removes from the list of scenes to be managed.
+     * 
+     * @param {any} scene The scene to be removed
+     * @memberof SceneManager
+     */
+    removeScene(scene){
+        if(this.currentScene == scene){
+            this.currentScene = new Scene();
+        }
+        delete this.scenes[scene.id];
     }
 
     /**
@@ -7190,14 +7226,22 @@ class SceneManager{
 SceneManager.Instance = false;
 
 class Trinity{
-    constructor(){
-        this.manager = new SceneManager();
+    constructor(height = window.innerHeight, width = window.innerWidth, startingScene = null){
+        this.manager = new SceneManager(height, width, startingScene);
         this.clock = new THREE.Clock();
     }
 
     addScene(scene){
         if(scene instanceof Scene){
             this.manager.addScene(scene);
+        }else{
+            console.error("Invalid scene");
+        }
+    }
+
+    removeScene(scene){
+        if(scene instanceof Scene){
+            this.manager.removeScene(scene);
         }else{
             console.error("Invalid scene");
         }
@@ -7212,11 +7256,15 @@ class Trinity{
     }
 
     start(){
-        window.requestAnimationFrame(this.start.bind(this));
+        this.frame = window.requestAnimationFrame(this.start.bind(this));
     
         var deltaTime = this.clock.getDelta();
         this.manager.draw(deltaTime);
         document.getElementById('fps').innerHTML = "" + Math.round(1/deltaTime) + " FPS";
+    }
+
+    stop(){
+        window.cancelAnimationFrame(this.frame);
     }
 }
 //=require trinity/Scene.js
@@ -7647,10 +7695,9 @@ function randomColor() {
 }
 
 
+var myGame = new Trinity();
 
-function startGame(){
-
-    var myGame = new Trinity();
+function startGame(){    
 
     // Make some scenes for testing
     var wallScene = MakeWallScene();
@@ -7690,6 +7737,11 @@ function startGame(){
                 console.log("X BUTTON PRESSED");
             }
         },
+        "GP_AXIS_LEFT_X" : function (value){
+            if(value > 0.005){
+                console.log("AXIS LEFT MOVED: " + value );
+            }            
+        }
     };
     
     wallScene.input.bindControls(controls);

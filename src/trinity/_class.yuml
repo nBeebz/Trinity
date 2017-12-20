@@ -12,7 +12,6 @@
 
 [Trinity]++1-1[SceneManager]
 [SceneManager]++1-1..*[Scene]
-[SceneManager]++1-1[InputManager]
 [Scene]+1-0..*[Entity]
 [Scene]+1-0..*[PhysicsComponent]
 [Scene]+1-0..*[AudioComponent]

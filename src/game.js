@@ -1,10 +1,9 @@
 //=require trinity/Trinity.js
 //=require scenes.js
 
+var myGame = new Trinity();
 
-function startGame(){
-
-    var myGame = new Trinity();
+function startGame(){    
 
     // Make some scenes for testing
     var wallScene = MakeWallScene();
@@ -44,6 +43,11 @@ function startGame(){
                 console.log("X BUTTON PRESSED");
             }
         },
+        "GP_AXIS_LEFT_X" : function (value){
+            if(value > 0.005){
+                console.log("AXIS LEFT MOVED: " + value );
+            }            
+        }
     };
     
     wallScene.input.bindControls(controls);

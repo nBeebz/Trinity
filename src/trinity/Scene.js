@@ -104,26 +104,30 @@ class Scene{
      * @memberof Scene
      */
     updateEntity(entity){
-        if(!entities.includes(entity)){
+        if(!this.entities.includes(entity)){
             this.add(entity);
             return;
         }
         for(var tag in entity.components){
             if(this.tagList.includes(tag)){
-                this.components[tag][entity.id] = entity.components[tag];
+                if(entity.components[tag] == null){
+                    delete this.components[tag][entity.id];
+                }else{
+                    this.components[tag][entity.id] = entity.components[tag];
+                }
             }
         }
 
         entity.needsUpdate = false;
     }
 
-/**
- * Updates this scene and all of it's components.
- * 
- * @param {any} deltaTime The time since last update
- * @memberof Scene
- */
-update(deltaTime){
+    /**
+     * Updates this scene and all of it's components.
+     * 
+     * @param {any} deltaTime The time since last update
+     * @memberof Scene
+     */
+    update(deltaTime){
         this.input.update();
 
         // Step world
@@ -133,7 +137,7 @@ update(deltaTime){
         // Update entities first
         for ( var i = 0; i < this.entities.length; i++ ) {
             if(this.entities[i].needsUpdate){
-                updateEntity(this.entities[i]);     
+                this.updateEntity(this.entities[i]);     
             }
         }
 

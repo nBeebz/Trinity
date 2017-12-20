@@ -11,7 +11,7 @@ class SceneManager{
      * @param {any} startingScene The scene to start with this SceneManager.
      * @memberof SceneManager
      */
-    constructor(startingScene){
+    constructor(height = window.innerHeight, width = window.innerWidth, startingScene = null){
         if(SceneManager.Instance){
             return SceneManager.Instance;
         }
@@ -21,10 +21,13 @@ class SceneManager{
             this.changeScene(startingScene);
         }
 
+        this.screenWidth = width;
+        this.screenHeight = height;
+
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
-        this.renderer.shadowMap.enabled = true;
+        this.renderer.setSize( this.screenWidth, this.screenHeight );
+        this.renderer.shadowMap.enabled = true;        
 
         document.body.appendChild( this.renderer.domElement );  
         window.addEventListener( 'resize', this.onWindowResize, false );
@@ -39,10 +42,10 @@ class SceneManager{
      */
     onWindowResize() {
         for(var scene in this.scenes){
-            scene.camera.aspect = window.innerWidth / window.innerHeight;
+            scene.camera.aspect = this.screenWidth / this.screenHeight;
             scene.camera.updateProjectionMatrix();
         }
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( this.screenWidth, this.screenHeight );
     }
 
     /**
@@ -56,6 +59,19 @@ class SceneManager{
         if(this.currentScene == undefined){
             this.changeScene(scene);
         }
+    }
+
+    /**
+     * Removes from the list of scenes to be managed.
+     * 
+     * @param {any} scene The scene to be removed
+     * @memberof SceneManager
+     */
+    removeScene(scene){
+        if(this.currentScene == scene){
+            this.currentScene = new Scene();
+        }
+        delete this.scenes[scene.id];
     }
 
     /**

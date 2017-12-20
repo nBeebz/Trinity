@@ -16,7 +16,7 @@ class PhysicsComponent{
      * @param {Object} rotation The rotation of the component in quaternion form.
      * @memberof PhysicsComponent
      */
-    constructor(shape, position, mass, rotation){
+    constructor(shape = new Ammo.btBoxShape(new Ammo.btVector3(1,1,1)), position = new Ammo.btVector3(0,0,0), mass = 0, rotation = new Ammo.btVector3(0,0,0)){
         var transform = new Ammo.btTransform();
         transform.setIdentity();
         transform.setOrigin( new Ammo.btVector3( position.x, position.y, position.z ) );
@@ -36,7 +36,7 @@ class PhysicsComponent{
     /**
      * Updates this component after the physics world as been stepped.
      * 
-     * @param {any} transform The transform information for this componentwill be saved to this object if it has a motion state.
+     * @param {any} transform The transform information for this component. Will be saved to this object if it has a motion state.
      * @returns {boolean} Whether or not this component has a motion state on this frame.
      * @memberof PhysicsComponent
      */

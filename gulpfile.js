@@ -7,8 +7,8 @@ var gulp            = require("gulp"),
 gulp.task("document", function(){
   console.log("-- building documentation");
   return gulp.src('src/trinity/*.js')
-  .pipe(docs('html'))
-  .pipe(gulp.dest('build/docs'));
+  .pipe(docs('md'))
+  .pipe(gulp.dest('build/docs/markdown'));
 });
 
 gulp.task("scripts", function() {
